@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  
+  <meta http-equiv="Content-Security-Policy" 
+    content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:; 
+             img-src * data: blob:; 
+             media-src *; 
+             frame-src *; 
+             script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; 
+             style-src 'self' 'unsafe-inline' https:;">
+  
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  
+  <title>Boiler Inspection Learning Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+:root{
+  --navy:#0f2a44; --slate:#64748b;
+  --teal:#14b8a6; --teal2:#0d9488;
+  --indigo:#6366f1; --indigo2:#4f46e5;
+  --primary-materi:#10b981; --primary-materi-dark:#065f46;
+  --primary-assessment:#6366f1; --primary-assessment-dark:#312e81;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Miriam Libre',sans-serif}
+html,body{height:100%}
+body{
+  background:url('https://lh3.googleusercontent.com/d/1wWJbAGOvADOrGRfhgEEAu8SH3aDy-RiR') no-repeat center/cover fixed;
+  color:#fff; overflow-x:hidden; position:relative;
+}
+body::before{content:'';position:fixed;inset:0;background:rgba(0,0,0,.05);z-index:0}
+.container,.content-page{position:relative;z-index:1}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── Logo & landing (asli) ── */
+.logo-wrap{position:absolute;top:30px;left:45px;display:flex;align-items:center;gap:16px;z-index:3}
+.logo-wrap img{width:70px;height:70px;object-fit:contain}
+.logo-text{font-size:24px;font-weight:700;letter-spacing:1px;text-shadow:0 3px 10px rgba(0,0,0,.6)}
+.container{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:60px;max-width:900px}
+h1{font-size:clamp(44px,6vw,78px);font-weight:700;line-height:1.1;margin-bottom:40px;text-shadow:0 10px 30px rgba(0,0,0,.5)}
+.button-group{display:flex;gap:20px;flex-wrap:wrap}
+.main-btn{border:none;padding:20px 50px;border-radius:12px;font-size:20px;font-weight:700;cursor:pointer;color:#fff;
+  transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 10px 20px rgba(0,0,0,.3)}
+.btn-materi{background:linear-gradient(135deg,var(--primary-materi),var(--primary-materi-dark))}
+.btn-assessment{background:linear-gradient(135deg,var(--primary-assessment),var(--primary-assessment-dark))}
+.main-btn:hover{transform:translateY(-5px);filter:brightness(1.2)}
+
+/* ── Halaman materi & assessment ── */
+.content-page{display:none;min-height:100vh;min-height:100dvh;padding:120px 40px 40px;max-width:1300px;margin:0 auto}
+#assessmentPage{flex-direction:column}
+.page-navbar{position:fixed;top:30px;right:40px;display:flex;gap:12px;z-index:100}
+.nav-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:10px 20px;
+  border-radius:30px;border:1px solid rgba(255,255,255,.25);background:rgba(16,185,129,.85);color:#fff;font-size:14px;font-weight:700;
+  white-space:nowrap;cursor:pointer;transition:transform .3s,filter .3s;-webkit-tap-highlight-color:transparent}
+.nav-btn.logout{background:rgba(239,68,68,.85)}
+.nav-btn:hover{transform:scale(1.05);filter:brightness(1.2)}
+.page-header{text-align:center;margin-bottom:30px}
+.page-header h2{display:inline-block;font-size:clamp(28px,4vw,42px);font-weight:700;padding:8px 22px;border-radius:14px;
+  background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.65);box-shadow:0 6px 20px rgba(15,42,68,.1);
+  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
+#materiPage .page-header h2{color:#0f766e}
+#assessmentPage .page-header h2{color:#4338ca}
+.page-sub{display:inline-block;margin-top:12px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,.45);
+  border:1px solid rgba(255,255,255,.7);color:#1e293b;font-size:15px}
+
+/* ── Kartu topik (putih) ── */
+.topic-grid{display:grid;gap:16px;padding:6px 4px 24px;align-content:start;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.topic-card{--accent:var(--teal);--accent2:var(--teal2);
+  position:relative;display:flex;align-items:center;gap:14px;padding:16px 16px 16px 22px;border-radius:18px;
+  cursor:pointer;overflow:hidden;outline:none;color:var(--navy);background:rgba(255,255,255,.32);border:1px solid rgba(255,255,255,.65);
+  box-shadow:0 8px 24px rgba(15,42,68,.12);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);
+  transition:transform .25s,box-shadow .25s,background .25s;animation:rise .45s backwards;animation-delay:var(--d,0s);
+  -webkit-tap-highlight-color:transparent}
+.topic-card.assess{--accent:var(--indigo);--accent2:var(--indigo2)}
+.topic-card::before{content:"";position:absolute;left:8px;top:16px;bottom:16px;width:3px;border-radius:99px;
+  background:linear-gradient(180deg,var(--accent),var(--accent2))}
+.topic-card:focus-visible{box-shadow:0 0 0 3px var(--accent)}
+.topic-card:active{transform:scale(.98)}
+@media (hover:hover){
+  .topic-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.5);box-shadow:0 16px 34px rgba(15,42,68,.2)}
+  .topic-card:hover .topic-go{background:var(--accent);color:#fff;transform:translateX(4px)}
+}
+.topic-no{flex:0 0 46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:18px;font-weight:700;
+  color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 4px 10px rgba(15,42,68,.2)}
+.topic-body{flex:1;min-width:0}
+.topic-title{font-weight:700;font-size:16px;line-height:1.35;word-break:break-word;color:#0b1f33;text-shadow:0 0 10px rgba(255,255,255,.7)}
+.topic-sub{font-size:13px;font-weight:700;color:#1e293b;margin-top:3px;text-shadow:0 0 8px rgba(255,255,255,.7)}
+.topic-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.topic-go{flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:22px;line-height:1;
+  color:#334155;background:rgba(15,42,68,.07);transition:transform .25s,background .25s}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;
+  background:rgba(255,255,255,.7);color:#1e293b;border:1px solid rgba(15,42,68,.15)}
+.chip.ok{background:rgba(209,250,229,.85);color:#065f46;border-color:rgba(16,185,129,.45)}
+.chip.bad{background:rgba(254,226,226,.85);color:#991b1b;border-color:rgba(239,68,68,.45)}
+.chip.warn{background:rgba(254,243,199,.9);color:#92400e;border-color:rgba(245,158,11,.5)}
+.topic-bar{height:5px;border-radius:99px;background:rgba(15,42,68,.1);overflow:hidden;margin-top:9px}
+.topic-bar>i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.summary-pill,.state-box{grid-column:1/-1;background:rgba(255,255,255,.6);color:var(--navy);border:1px solid rgba(255,255,255,.85);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 6px 18px rgba(15,42,68,.14);border-radius:14px}
+.summary-pill{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;padding:12px 16px;font-size:14px;font-weight:700}
+.summary-pill span[style]{color:#b45309!important}
+.state-box{text-align:center;padding:30px 20px}
+.state-box small{display:block;margin:6px 0 10px;opacity:.7}
+.spinner{width:34px;height:34px;border:4px solid rgba(15,42,68,.15);border-top-color:var(--teal2);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}
+.g-loading{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.55);color:#fff;z-index:11000;backdrop-filter:blur(4px)}
+.g-loading.active{display:flex}
+.g-loading .spinner{border-color:rgba(255,255,255,.3);border-top-color:#fff}
+
+/* ── Tombol umum ── */
+.btn-main,.btn-secondary,.btn-back{border:none;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;transition:.25s;font-family:inherit}
+.btn-main{background:linear-gradient(145deg,#2563eb,#3b82f6,#60a5fa);padding:12px 24px;margin:6px}
+.btn-secondary{background:linear-gradient(145deg,#16a34a,#22c55e,#4ade80);padding:12px 24px;margin:6px}
+.btn-back{background:linear-gradient(135deg,#6b7280,#4b5563);padding:14px 28px;width:100%;margin-top:12px}
+.btn-main:hover,.btn-secondary:hover{transform:scale(1.05);filter:brightness(1.1)}
+.btn-back:hover{transform:translateY(-2px)}
+
+/* ── Modal login & konfirmasi ── */
+.modal,.confirm-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal{background:rgba(0,0,0,.7);z-index:999}
+.confirm-modal{background:rgba(0,0,0,.8);z-index:10000}
+.modal.active,.confirm-modal.active{display:flex}
+.modal-box,.confirm-box{background:#fff;color:#1e293b;padding:40px;border-radius:24px;position:relative;
+  max-height:92vh;max-height:92dvh;overflow-y:auto}
+.modal-box{width:min(420px,90%)}
+.confirm-box{width:min(450px,90%);text-align:center;box-shadow:0 25px 50px rgba(99,102,241,.3)}
+.modal-box h2{margin-bottom:24px;text-align:center}
+.modal-box input,.modal-box select{width:100%;padding:14px;border-radius:12px;border:2px solid #e2e8f0;margin-bottom:16px;font-size:16px}
+.login-btn{width:100%;padding:16px;border-radius:12px;border:none;background:#0f172a;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
+.modal-close-btn{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:2px solid #e2e8f0;
+  background:#f8fafc;color:var(--slate);font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-close-btn:hover{background:#fee2e2;border-color:#fca5a5;color:#ef4444}
+.confirm-title{font-size:28px;font-weight:700;margin-bottom:16px;background:linear-gradient(135deg,var(--indigo),#8b5cf6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.confirm-text{font-size:16px;margin-bottom:30px;color:var(--slate);line-height:1.6}
+
+/* ── Quiz ── */
+.quiz-page{display:none;position:fixed;inset:0;background:#0f172a;z-index:1000;flex-direction:column;align-items:center;padding:40px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
+.quiz-container{max-width:800px;width:100%;margin:auto;background:#fff;border-radius:24px;padding:40px;color:#1e293b}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;border-bottom:2px solid #f1f5f9;padding-bottom:15px}
+.timer-badge{background:#fee2e2;color:#ef4444;padding:8px 16px;border-radius:12px;font-weight:700}
+.question-text{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:25px}
+.question-image{width:100%;max-height:250px;object-fit:contain;border-radius:12px;margin-bottom:20px}
+.options-grid{display:grid;gap:12px}
+.option-btn{min-height:54px;padding:16px 20px;border:2px solid #e2e8f0;border-radius:12px;text-align:left;font-size:16px;font-weight:700;
+  cursor:pointer;background:#fff;transition:.2s;font-family:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.option-btn:hover{background:#f1f5f9;border-color:var(--indigo)}
+.option-btn:active{transform:scale(.98)}
+.option-btn.selected{background:#ede9fe;border-color:var(--indigo);color:#312e81}
+.score-circle{width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:48px;font-weight:700;margin:0 auto 24px;color:#fff}
+.score-circle.green{background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 0 40px rgba(16,185,129,.6)}
+.score-circle.red{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 0 40px rgba(239,68,68,.6)}
+
+/* ── Media viewer ── */
+.media-viewer{position:fixed;inset:0;height:100vh;height:100dvh;background:#000;z-index:9999;display:flex;flex-direction:column;overflow:hidden;color:#fff}
+.media-header{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 15px 0 20px;
+  background:rgba(0,0,0,.95);flex-shrink:0;z-index:10000}
+.media-header>div:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.media-body{flex:1;position:relative;overflow:auto;background:#111;height:calc(100vh - 60px);height:calc(100dvh - 60px);touch-action:pan-x pan-y pinch-zoom}
+.media-slider{position:relative;width:100%;height:100%}
+.media-slide{display:none;width:100%;height:100%;justify-content:center;align-items:flex-start;background:#111;padding:10px 0;overflow:auto}
+.media-slide.active{display:flex}
+.media-slide img{width:100%;height:calc(100vh - 70px);height:calc(100dvh - 70px);object-fit:contain;display:block;
+  transition:transform .3s;transform-origin:left top;cursor:zoom-in}
+.media-slide img.zoom2x{transform:scale(1.5);width:200%;cursor:grab}
+.media-slide img.zoom3x{transform:scale(2);width:300%;cursor:grab}
+.media-slide iframe{width:95%;height:calc(100vh - 75px);height:calc(100dvh - 75px);border:none;border-radius:14px}
+.slide-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.9);
+  color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10}
+.slide-prev{left:15px}.slide-next{right:15px}
+.slide-nav:hover{background:rgba(255,255,255,.3)}
+
+/* ── Safe area ── */
+@supports (padding:max(0px)){
+  body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+  .logo-wrap{top:calc(15px + env(safe-area-inset-top))}
+}
+
+/* ── Tablet & HP portrait ── */
+@media (max-width:768px){
+  .container{padding:100px 20px 30px;max-width:100%}
+  .logo-wrap{top:12px;left:14px;gap:10px}
+  .logo-wrap img{width:44px;height:44px}
+  .logo-text{font-size:16px}
+  .page-navbar{top:64px;left:14px;right:14px;gap:8px}
+  .page-navbar .nav-btn{flex:1;padding:10px 12px}
+  .content-page{padding:124px 14px 30px}
+  .page-header{margin-bottom:18px}
+  .page-header h2{font-size:24px;padding:8px 16px}
+  .page-sub{font-size:13px}
+  .topic-grid{grid-template-columns:1fr;gap:12px;padding:4px 0 20px}
+  .quiz-page{padding:14px}
+  .quiz-container{padding:22px 18px;border-radius:20px}
+  .question-text{font-size:18px}
+  .question-image{max-height:200px}
+  .score-circle{width:140px;height:140px;font-size:40px}
+  .modal-box,.confirm-box{padding:26px 20px}
+}
+@media (max-width:600px){
+  h1{font-size:clamp(32px,10vw,46px);margin-bottom:22px}
+  .button-group{flex-direction:column;gap:14px}
+  .main-btn{width:100%;padding:18px 25px;font-size:18px}
+}
+
+/* ── HP landscape (taruh PALING AKHIR) ── */
+@media (max-height:500px) and (orientation:landscape){
+  .container{padding:64px 24px 14px;max-width:100%}
+  h1{font-size:clamp(24px,5vw,36px);margin-bottom:12px}
+  .button-group{flex-direction:row;flex-wrap:nowrap;gap:12px}
+  .main-btn{flex:1;width:auto;padding:12px 14px;font-size:16px}
+  .logo-wrap{top:8px;left:14px}
+  .logo-wrap img{width:38px;height:38px}
+  .logo-text{font-size:15px}
+  .page-navbar{top:8px;left:auto;right:max(14px,env(safe-area-inset-right));flex-direction:row}
+  .page-navbar .nav-btn{flex:none;padding:8px 14px;font-size:13px;min-height:36px}
+  .content-page{padding:60px 16px 20px}
+  .page-header{margin-bottom:10px}
+  .page-header h2{font-size:20px;padding:5px 14px}
+  .page-sub{display:none}
+  .topic-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .topic-card{padding:12px 12px 12px 18px}
+  .quiz-page{padding:10px}
+  .quiz-container{padding:14px 20px;border-radius:16px}
+  .quiz-header{margin-bottom:12px;padding-bottom:8px}
+  .question-text{font-size:16px;margin-bottom:12px}
+  .question-image{max-height:110px;margin-bottom:10px}
+  .options-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .option-btn{padding:10px 12px;font-size:14px;min-height:0}
+  .score-circle{width:96px;height:96px;font-size:30px;margin-bottom:10px}
+  .modal-box,.confirm-box{padding:16px 22px}
+  .modal-box h2{font-size:18px;margin-bottom:10px}
+  .modal-box input,.modal-box select{padding:9px 12px;margin-bottom:8px}
+  .login-btn{padding:11px}
+  .media-header{height:50px}
+}
+</style>
+</head>
+
+<body>
+  <div class="logo-wrap" onclick="goLandingPage()" style="cursor:pointer;">
+    <img src="https://lh3.googleusercontent.com/d/1CwBi7j323RQBIhBoSBpREdp4qNuREx6F" />
+    <div class="logo-text">Service & Inspection</div>
+  </div>
+
+  <div id="landingPage" class="container">
+    <h1>Boiler Inspection<br>Learning Center</h1>
+    <div class="button-group">
+      <button class="main-btn btn-materi" onclick="handlePageClick('materi')">Pelajari Materi</button>
+      <button class="main-btn btn-assessment" onclick="handlePageClick('assessment')">Ikut Assessment</button>
+    </div>
+  </div>
+
+  <div id="materiPage" class="content-page">
+    <div class="page-navbar active">
+      <button class="nav-btn" onclick="showAssessmentPage()">Ke Assessment</button>
+      <button class="nav-btn logout" onclick="logout()">Logout</button>
+    </div>
+    <div class="page-header">
+      <h2>Materi Pelatihan</h2>
+    </div>
+    <div id="materialList" class="content-grid"></div>
+  </div>
+
+  <div id="assessmentPage" class="content-page">
+    <div class="page-navbar active">
+      <button class="nav-btn" onclick="showMateriPage()">Ke Materi</button>
+      <button class="nav-btn logout" onclick="logout()">Logout</button>
+    </div>
+    <div class="page-header">
+      <h2>Ujian Assessment</h2>
+    </div>
+    <div id="assessmentList" class="content-grid"></div>
+  </div>
+
+  <div id="quizPage" class="quiz-page">
+    <div class="quiz-container" id="quizContainer"></div>
+  </div>
+
+  <!-- ===== MODAL LOGIN ===== -->
+  <div id="loginModal" class="modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeLoginModal()" title="Batal">&times;</button>
+      <h2>Identitas Peserta</h2>
+      <input id="nama" placeholder="Nama Lengkap" />
+      <label style="display:block; margin-bottom:6px; font-size:14px; font-weight:700; color:#475569;">Unit</label>
+      <select id="unit" required>
+        <option value="">Pilih Unit Kerja</option>
+      </select>
+      <input id="posisi" placeholder="Jabatan" />
+      <button class="login-btn" onclick="submitLogin()">Mulai Sekarang</button>
+      <button 
+        onclick="closeLoginModal()" 
+        style="width:100%; margin-top:12px; padding:12px; background:none; border:2px solid #e2e8f0; border-radius:12px; color:#64748b; font-size:15px; font-weight:700; cursor:pointer; font-family:'Miriam Libre',sans-serif; transition:all .2s;"
+        onmouseover="this.style.background='#f1f5f9'"
+        onmouseout="this.style.background='none'"
+      >Batal</button>
+    </div>
+  </div>
+
+  <!-- ===== GLOBAL LOADING ===== -->
+  <div id="globalLoading" class="g-loading">
+    <div class="spinner"></div>
+    <span>Loading…</span>
+  </div>
+
+  <!-- ===== CONFIRM MODAL ===== -->
+  <div id="confirmModal" class="confirm-modal">
+    <div class="confirm-box">
+      <h2 class="confirm-title" id="confirmTitle">Mulai Assessment</h2>
+      <p class="confirm-text" id="confirmText">Apakah Anda yakin ingin memulai assessment ini?</p>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-main" onclick="confirmQuiz()" style="flex: 1;">Ya, Mulai!</button>
+        <button class="btn-back" onclick="closeConfirmModal()">Batal</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ================= CONFIG ================= */
+const UNITS = [
+  "Head office","PHLM","LPYM","JLTM","LNGM","PLKM","SBNM","SAJM","TDKB","PPNM","BSWM","MKNM","SKMM","TKMM","BLTB",
+  "BPRM","LWSM","SBYM","SMRM","TLTM","BAMM","SKPM","SWTM","SMGM","BKPM","MWHM","LBNB","JLYM","RPNM","TKRB","MLKB",
+  "SPKM","SKDM","LIBM","SSMM","UTJM","RRMM","KJGM","NSAM","INKM","BPMM","HNAM","SRUM","BGNB","SMLM","PRDM","SKOM",
+  "TNGM","KUYM","PMTB","JLMM","PKWM","KNNM","KNRM","KDWB","KTPB","BLNM","KSRM","DMTB","SRIM","STWM","BDAB"
+];
+
+const ONE_HOUR   = 60 * 60 * 1000;
+const PASS_SCORE = 90;
+
+/* ================= API (Apps Script Web App) ================= */
+const API_URL = 'https://script.google.com/macros/s/AKfycbzPjhrEEE_nFe-5QSxv2B-OTXB3tutX95zOzWiGaEEj_Pzdc7JSukCDzutDcRy1O76D/exec';
+
+async function apiGet(action, params = {}){
+  const qs  = new URLSearchParams({ action, ...params }).toString();
+  const res = await fetch(`${API_URL}?${qs}`, { method:'GET', redirect:'follow' });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+async function apiPost(action, payload = {}){
+  const res = await fetch(API_URL, {
+    method : 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // text/plain = tanpa preflight CORS
+    body   : JSON.stringify({ action, ...payload })
+  });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+/* ================= UI HELPERS ================= */
+function setGlobalLoading(on){ document.getElementById('globalLoading').classList.toggle('active', !!on); }
+function loadingHtml(text){ return `<div class="state-box"><div class="spinner"></div><div>${text}</div></div>`; }
+function showListError(box, err, retryFn){
+  box.className = 'topic-grid';
+  box.innerHTML = `<div class="state-box">⚠️ Gagal memuat data.<small></small><button class="btn-main" type="button">🔄 Coba lagi</button></div>`;
+  box.querySelector('small').textContent = (err && err.message) ? err.message : '';
+  box.querySelector('button').onclick = retryFn;
+}
+
+/* ================= DROPDOWN ================= */
+function loadUnitList(){
+  const select = document.getElementById("unit");
+  UNITS.forEach(unit => {
+    const opt = document.createElement("option");
+    opt.value = unit;
+    opt.textContent = unit;
+    select.appendChild(opt);
+  });
+}
+
+/* ================= SESSION HELPER ================= */
+function getValidSession() {
+  const userData  = sessionStorage.getItem("userData");
+  const loginTime = parseInt(sessionStorage.getItem("loginTime") || '0', 10);
+  if (!userData) return null;
+  if (Date.now() - loginTime >= ONE_HOUR) {
+    sessionStorage.removeItem("userData");
+    sessionStorage.removeItem("loginTime");
+    return null;
+  }
+  return JSON.parse(userData);
+}
+
+/* ================= LOGIN ================= */
+window.submitLogin = () => {
+  const nama   = document.getElementById("nama").value.trim();
+  const unit   = document.getElementById("unit").value;
+  const posisi = document.getElementById("posisi").value.trim();
+
+  if (!nama || !unit) return alert("Isi Nama dan Unit dulu");
+
+  sessionStorage.setItem("userData",  JSON.stringify({ nama, unit, posisi }));
+  sessionStorage.setItem("loginTime", String(Date.now()));
+
+  document.getElementById("loginModal").classList.remove("active");
+
+  if (window.targetPage === "materi") {
+    showMateriPage();
+  } else {
+    showAssessmentPage();
+  }
+  window.targetPage = null;
+
+  apiPost('saveLoginLog', { userData: { nama, unit, posisi } }).catch(() => {});
+};
+
+window.closeLoginModal = () => {
+  document.getElementById("loginModal").classList.remove("active");
+  window.targetPage = null;
+};
+
+/* ================= NAV ================= */
+window.handlePageClick = (page) => {
+  const user = getValidSession();
+  if (user) {
+    page === "materi" ? showMateriPage() : showAssessmentPage();
+  } else {
+    window.targetPage = page;
+    document.getElementById("loginModal").classList.add("active");
+  }
+};
+
+function showMateriPage(){
+  landingPage.style.display    = "none";
+  materiPage.style.display     = "block";
+  assessmentPage.style.display = "none";
+  loadMateri();
+}
+
+function showAssessmentPage(){
+  landingPage.style.display    = "none";
+  materiPage.style.display     = "none";
+  assessmentPage.style.display = "flex";
+  loadAssessmentList();
+}
+
+/* ================= LOAD MATERI ================= */
+function loadMateri(){
+  const box = document.getElementById("materialList");
+  box.className = "topic-grid";
+  box.innerHTML = loadingHtml('Loading daftar materi…');
+  apiGet('getListMateri')
+    .then(data => {
+      if(!Array.isArray(data)) throw new Error('Format data tidak valid');
+      renderMateri(data);
+    })
+    .catch(err => showListError(box, err, loadMateri));
+}
+
+function renderMateri(data){
+  const box = document.getElementById("materialList");
+  box.className = "topic-grid";
+  box.innerHTML = "";
+
+  if(data.length === 0){
+    box.innerHTML = '<div class="state-box">Belum ada materi tersedia.</div>';
+    return;
+  }
+
+  data.forEach((m, i) => {
+    const card = document.createElement('div');
+    card.className = 'topic-card materi';
+    card.style.setProperty('--d', (i * 0.05) + 's');
+    card.setAttribute('role', 'button');
+    card.tabIndex = 0;
+    card.innerHTML = `
+      <div class="topic-no">${i + 1}</div>
+      <div class="topic-body">
+        <div class="topic-title"></div>
+        <div class="topic-sub">Klik untuk membuka materi</div>
+        <div class="topic-meta">
+          ${m.gambar ? '<span class="chip">🖼️ Slide</span>' : ''}
+          ${m.video  ? '<span class="chip">🎬 Video</span>' : ''}
+        </div>
+      </div>
+      <div class="topic-go">›</div>`;
+    card.querySelector('.topic-title').textContent = m.judul;
+    card.onclick   = () => showMateriViewer(m);
+    card.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); showMateriViewer(m); } };
+    box.appendChild(card);
+  });
+}
+
+/* ================= MEDIA FIX ================= */
+function normalizeImage(url){
+  if(!url) return "";
+  if(url.includes("drive.google.com")){
+    const id = url.match(/[-\w]{25,}/);
+    if(id) return `https://lh3.googleusercontent.com/d/${id[0]}`;
+  }
+  return url;
+}
+
+function normalizeVideo(url){
+  if(!url) return "";
+  if(url.includes("watch?v=")) return url.replace("watch?v=","embed/");
+  return url;
+}
+
+/* ================= MEDIA VIEWER ================= */
+let viewerZoomLevel = 1, viewerMediaList = [], currentSlideIndex = 0;
+
+function buildMediaList(m){
+  viewerMediaList = [];
+  if(m.gambar){
+    if(Array.isArray(m.gambar)) viewerMediaList.push(...m.gambar);
+    else viewerMediaList.push(m.gambar);
+  }
+  if(m.video){
+    if(Array.isArray(m.video)) viewerMediaList.push(...m.video);
+    else viewerMediaList.push(m.video);
+  }
+}
+
+window.showMateriViewer = function(m){
+  buildMediaList(m);
+  if(viewerMediaList.length === 0){ alert("Tidak ada media di materi ini"); return; }
+
+  let slidesHtml = viewerMediaList.map((url, i) => {
+    if(isVideo(url)){
+      return `<div class="media-slide ${i===0?'active':''}">
+        <iframe src="${normalizeVideo(url)}" allowfullscreen style="width:95%; height:90%; border-radius:12px;"></iframe>
+      </div>`;
+    } else {
+      return `<div class="media-slide ${i===0?'active':''}">
+        <img src="${normalizeImage(url)}" class="zoomable" alt="Slide ${i+1}">
+      </div>`;
+    }
+  }).join("");
+
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="media-viewer" id="mediaViewer">
+      <div class="media-header">
+        <div style="font-weight:700; font-size:18px;">
+          ${m.judul}
+          <span id="slideCounter" style="font-size:14px; opacity:0.8;">(1/${viewerMediaList.length})</span>
+        </div>
+        <div>
+          ${viewerMediaList.length > 1 ? `
+            <button onclick="changeSlide(-1)" style="padding:8px 12px; background:rgba(255,255,255,0.2); border:none; border-radius:8px; color:white; cursor:pointer; margin-right:8px;">❮</button>
+            <button onclick="changeSlide(1)"  style="padding:8px 12px; background:rgba(255,255,255,0.2); border:none; border-radius:8px; color:white; cursor:pointer; margin-right:10px;">❯</button>
+          ` : ''}
+          <button onclick="closeMediaViewer()" style="padding:10px 20px; background:#ef4444; border:none; border-radius:10px; color:white; cursor:pointer;">Tutup</button>
+        </div>
+      </div>
+      <div class="media-body">
+        <div class="media-slider">
+          ${slidesHtml}
+          ${viewerMediaList.length > 1 ? `
+            <div class="slide-nav slide-prev" onclick="changeSlide(-1)">❮</div>
+            <div class="slide-nav slide-next" onclick="changeSlide(1)">❯</div>
+          ` : ''}
+        </div>
+      </div>
+    </div>`);
+
+  currentSlideIndex = 0;
+  setTimeout(setupSliderZoom, 100);
+};
+
+function closeMediaViewer(){
+  const viewer = document.getElementById("mediaViewer");
+  if(viewer) viewer.remove();
+  viewerZoomLevel = 1;
+}
+
+function isVideo(url){ return url.includes("youtube") || url.includes("preview") || url.includes("embed"); }
+
+function setupSliderZoom(){
+  const slides = document.querySelectorAll('.media-slide');
+  const images = document.querySelectorAll('.zoomable');
+  slides.forEach((slide, i) => slide.classList.toggle('active', i === currentSlideIndex));
+  images.forEach(img => {
+    img.onwheel = scrollZoomHandler;
+    img.style.cursor = 'zoom-in';
+    img.classList.remove('zoom2x','zoom3x','zoomed');
+  });
+  updateSlideCounter();
+}
+
+function scrollZoomHandler(e){
+  e.preventDefault(); e.stopPropagation();
+  const img = e.currentTarget;
+  img.classList.remove('zoom2x','zoom3x','zoomed');
+  if(e.deltaY < 0){
+    if(viewerZoomLevel < 3) viewerZoomLevel++;
+    if(viewerZoomLevel === 2) img.classList.add('zoom2x','zoomed');
+    if(viewerZoomLevel === 3) img.classList.add('zoom3x','zoomed');
+  } else {
+    if(viewerZoomLevel > 1) viewerZoomLevel--;
+    if(viewerZoomLevel === 1) img.classList.remove('zoom2x','zoom3x','zoomed');
+    else img.classList.add('zoom2x','zoomed');
+  }
+}
+
+window.changeSlide = function(direction){
+  const slides = document.querySelectorAll('.media-slide');
+  currentSlideIndex = (currentSlideIndex + direction + slides.length) % slides.length;
+  slides.forEach((slide, i) => slide.classList.toggle('active', i === currentSlideIndex));
+  document.querySelectorAll('.zoomable').forEach(img => { img.classList.remove('zoom2x','zoom3x','zoomed'); viewerZoomLevel = 1; });
+  updateSlideCounter();
+};
+
+function updateSlideCounter(){
+  const counter = document.getElementById('slideCounter');
+  if(counter && viewerMediaList.length > 1) counter.textContent = `(${currentSlideIndex + 1}/${viewerMediaList.length})`;
+}
+
+/* ================= LOAD ASSESSMENT ================= */
+function loadAssessmentList(){
+  const user = getValidSession();
+  const box  = document.getElementById("assessmentList");
+  box.className = "topic-grid";
+  box.innerHTML = loadingHtml('Memuat daftar assessment…');
+
+  apiGet('getAssessmentList')
+    .then(list => {
+      if(!Array.isArray(list)) throw new Error('Format data tidak valid');
+      if(!user) return renderAssessmentList(list, {});
+      return apiGet('getUserScores', { nama:user.nama, unit:user.unit, posisi:user.posisi || '' })
+        .then(result => renderAssessmentList(list, result))
+        .catch(() => renderAssessmentList(list, {}));
+    })
+    .catch(err => showListError(box, err, loadAssessmentList));
+}
+
+function renderAssessmentList(list, result){
+  result = result || {};
+  const scores   = result.scores || {};
+  const remPer   = result.remedialPerModul || {};
+  const totalRem = result.remedialCount || 0;
+
+  const box = document.getElementById("assessmentList");
+  box.className = "topic-grid";
+  box.innerHTML = "";
+
+  if(list.length === 0){
+    box.innerHTML = '<div class="state-box">Belum ada assessment tersedia.</div>';
+    return;
+  }
+
+  const lulus = list.filter(m => (scores[m] || 0) >= PASS_SCORE).length;
+  const summary = document.createElement('div');
+  summary.className = 'summary-pill';
+  summary.innerHTML = `
+    <span>✅ ${lulus} dari ${list.length} modul lulus</span>
+    ${totalRem > 0 ? `<span style="color:#fcd34d;">🔁 Total remedial: ${totalRem}×</span>` : ''}`;
+  box.appendChild(summary);
+
+  list.forEach((m, i) => {
+    const score  = scores[m] || 0;
+    const has    = score > 0;
+    const pass   = score >= PASS_SCORE;
+    const rem    = remPer[m] || 0;
+
+    const card = document.createElement('div');
+    card.className = 'topic-card assess';
+    card.style.setProperty('--d', (i * 0.05) + 's');
+    card.setAttribute('role', 'button');
+    card.tabIndex = 0;
+    card.innerHTML = `
+      <div class="topic-no">${i + 1}</div>
+      <div class="topic-body">
+        <div class="topic-title"></div>
+        <div class="topic-meta">
+          ${has
+            ? `<span class="chip ${pass ? 'ok' : 'bad'}">${pass ? '✅ Lulus' : '❌ Belum lulus'} · ${score}</span>`
+            : '<span class="chip">Belum dikerjakan</span>'}
+          ${rem > 0 ? `<span class="chip warn">🔁 Remedial ${rem}×</span>` : ''}
+        </div>
+        ${has ? `<div class="topic-bar"><i style="width:${Math.min(score,100)}%"></i></div>` : ''}
+      </div>
+      <div class="topic-go">›</div>`;
+    card.querySelector('.topic-title').textContent = m;
+    card.onclick   = () => startConfirm(m);
+    card.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); startConfirm(m); } };
+    box.appendChild(card);
+  });
+}
+
+/* ================= QUIZ GLOBAL STATE ================= */
+let currentQuiz = {
+  questions: [], index: 0, score: 0, timer: null,
+  activeMateri: ''
+};
+let userAnswers = [];
+let selectedNow = null;
+let pendingMateri = '';
+
+/* ================= CONFIRM MODAL ================= */
+function startConfirm(materi){
+  pendingMateri = materi;
+  document.getElementById('confirmTitle').textContent  = materi;
+  document.getElementById('confirmText').textContent   = `Mulai assessment "${materi}"?`;
+  document.getElementById('confirmModal').classList.add('active');
+}
+
+function confirmQuiz(){
+  closeConfirmModal();
+  startDirectQuiz(pendingMateri);
+}
+
+function closeConfirmModal(){
+  document.getElementById('confirmModal').classList.remove('active');
+}
+
+/* ================= QUIZ CORE ================= */
+function startDirectQuiz(materi){
+  setGlobalLoading(true);
+  apiGet('getQuestionsByMaterial', { materi })
+    .then(questions => {
+      if(!Array.isArray(questions) || questions.length === 0){ alert("Tidak ada soal untuk: " + materi); return; }
+      currentQuiz = {
+        questions   : shuffle(questions),
+        index       : 0,
+        score       : 0,
+        activeMateri: materi,
+        timer       : null,
+        _shuffledOpts: []
+      };
+      userAnswers = [];
+      selectedNow = null;
+      document.getElementById("quizPage").style.display = "flex";
+      renderQuestion();
+    })
+    .catch(err => alert("Error load soal: " + err.message))
+    .finally(() => setGlobalLoading(false));
+}
+
+function renderQuestion(){
+  if(currentQuiz.index >= currentQuiz.questions.length) return finishQuiz();
+
+  const q    = currentQuiz.questions[currentQuiz.index];
+  let   time = q.timer || 20;
+  selectedNow = null;
+
+  const box = document.getElementById("quizContainer");
+
+  if(!currentQuiz._shuffledOpts[currentQuiz.index]){
+    currentQuiz._shuffledOpts[currentQuiz.index] = shuffle([...q.options]);
+  }
+  const opts = currentQuiz._shuffledOpts[currentQuiz.index];
+
+  const letters = ['A','B','C','D','E'];
+  const optsHtml = opts.map((o, i) =>
+    `<button class="option-btn" id="opt-${i}" onclick="pickOption(${i})">${letters[i]}. ${o}</button>`
+  ).join("");
+
+  box.innerHTML = `
+    <div class="quiz-header">
+      <b>Soal ${currentQuiz.index + 1}/${currentQuiz.questions.length}</b>
+      <div class="timer-badge" id="timer">${time}s</div>
+    </div>
+    ${q.gambar ? `<img src="${normalizeImage(q.gambar)}" class="question-image">` : ''}
+    <div class="question-text">${q.q}</div>
+    <div class="options-grid">${optsHtml}</div>
+    <button class="btn-main" id="nextBtn"
+      onclick="commitAndNext()"
+      style="display:none; width:100%; margin-top:20px;">
+      Lanjut ke Soal Berikutnya
+    </button>`;
+
+  clearInterval(currentQuiz.timer);
+  currentQuiz.timer = setInterval(() => {
+    time--;
+    const timerEl = document.getElementById("timer");
+    if(timerEl) timerEl.innerText = time + "s";
+    if(time <= 0){
+      clearInterval(currentQuiz.timer);
+      timeoutQuestion();
+    }
+  }, 1000);
+}
+
+function pickOption(optIdx){
+  selectedNow = currentQuiz._shuffledOpts[currentQuiz.index][optIdx];
+  document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+  const btn = document.getElementById('opt-' + optIdx);
+  if(btn) btn.classList.add('selected');
+  const nextBtn = document.getElementById('nextBtn');
+  if(nextBtn) nextBtn.style.display = 'block';
+}
+
+function commitAndNext(){
+  clearInterval(currentQuiz.timer);
+
+  const q      = currentQuiz.questions[currentQuiz.index];
+  const opts   = currentQuiz._shuffledOpts[currentQuiz.index];
+  const answer = selectedNow || null;
+
+  userAnswers[currentQuiz.index] = answer;
+  if(answer && answer === q.key) currentQuiz.score++;
+
+  /* [UBAH] Sembunyikan jawaban — hanya disable tombol tanpa reveal warna */
+  opts.forEach((o, i) => {
+    const btn = document.getElementById('opt-' + i);
+    if(!btn) return;
+    btn.disabled = true;
+  });
+
+  const nextBtn = document.getElementById('nextBtn');
+  if(nextBtn) nextBtn.style.display = 'none';
+
+  setTimeout(() => {
+    currentQuiz.index++;
+    renderQuestion();
+  }, 700);
+}
+
+function timeoutQuestion(){
+  userAnswers[currentQuiz.index] = 'TIMEOUT';
+
+  const q    = currentQuiz.questions[currentQuiz.index];
+  const opts = currentQuiz._shuffledOpts[currentQuiz.index];
+
+  /* [UBAH] Sembunyikan jawaban — hanya disable tombol tanpa reveal warna */
+  opts.forEach((o, i) => {
+    const btn = document.getElementById('opt-' + i);
+    if(!btn) return;
+    btn.disabled = true;
+  });
+
+  setTimeout(() => {
+    currentQuiz.index++;
+    renderQuestion();
+  }, 900);
+}
+
+/* ================= RESULT ================= */
+function finishQuiz(){
+  const nilai = Math.round((currentQuiz.score / currentQuiz.questions.length) * 100);
+  const user  = getValidSession();
+
+  apiPost('saveResultPerModule', {
+    userData: user,
+    material: currentQuiz.activeMateri,
+    correct : currentQuiz.score,
+    total   : currentQuiz.questions.length
+  })
+    .then(result => {
+      if(!result || result.status !== 'success') throw new Error((result && result.message) || 'Gagal menyimpan');
+      renderResultView(nilai, result);
+    })
+    .catch(() => renderResultView(nilai, { isRemedial:false, remedialCount:0, saveFailed:true }));
+
+  document.getElementById("quizContainer").innerHTML = `
+    <div style="text-align:center; padding:60px;">
+      <div style="font-size:40px; margin-bottom:16px;">⏳</div>
+      <p style="color:#64748b; font-size:16px;">Menyimpan hasil...</p>
+    </div>`;
+}
+
+function renderResultView(nilai, result){
+  const isPass         = nilai >= 90; /* [UBAH] nilai kelulusan 90 */
+  const circleClass    = isPass ? 'green' : 'red';
+  const isRemedial     = result && result.isRemedial;
+  const remedialCount  = result ? (result.remedialCount || 0) : 0;
+
+  const remedialInfo =
+    (isRemedial
+      ? `<p style="font-size:13px; color:#94a3b8; margin-top:6px;">🔁 Remedial ke-${remedialCount} tercatat di sistem</p>`
+      : '')
+    + (result && result.saveFailed
+      ? `<p style="font-size:13px; color:#dc2626; margin-top:6px;">⚠️ Nilai gagal tersimpan ke server. Periksa koneksi lalu coba lagi.</p>`
+      : '');
+
+  document.getElementById("quizContainer").innerHTML = `
+    <div style="text-align:center; padding:40px;">
+      <div class="score-circle ${circleClass}">${nilai}%</div>
+      <h2 style="font-size:28px; margin-bottom:12px; color:${isPass?'#059669':'#dc2626'};">
+        ${isPass ? '🎉 Selamat, Lulus!' : 'Belum Lulus'}
+      </h2>
+      <p style="color:#64748b; margin-bottom:6px; font-size:16px;">
+        ${currentQuiz.score} benar dari ${currentQuiz.questions.length} soal
+      </p>
+      ${remedialInfo}
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;">
+        <button class="btn-main" onclick="startConfirm('${escQ(currentQuiz.activeMateri)}')" style="flex:1;">🔄 Remedial</button>
+        <button class="btn-secondary" onclick="showReview()" style="flex:1;">📝 Review</button>
+        <button style="background:linear-gradient(135deg,#6b7280,#4b5563);color:white;border:none;padding:14px 28px;border-radius:12px;font-weight:700;cursor:pointer;flex:1;font-family:'Miriam Libre',sans-serif;" onclick="goToAssessment()">🏠 Assessment</button>
+      </div>
+    </div>`;
+}
+
+function showReview(){
+  let html = `
+    <div style="text-align:center; margin-bottom:24px;">
+      <h2 style="font-size:24px; color:#6366f1;">📝 Review Jawaban (${currentQuiz.questions.length} Soal)</h2>
+    </div>
+    <div style="max-height:400px; overflow-y:auto; padding-right:8px;">`;
+
+  currentQuiz.questions.forEach((q, i) => {
+    const opts       = currentQuiz._shuffledOpts[i] || q.options;
+    const userAnswer = userAnswers[i] || 'TIMEOUT';
+    const isCorrect  = userAnswer === q.key;
+    const isTimeout  = userAnswer === 'TIMEOUT';
+    const icon       = isCorrect ? '✅' : isTimeout ? '⏰' : '❌';
+    const bgColor    = isCorrect
+      ? 'linear-gradient(135deg,#10b981,#059669)'
+      : isTimeout
+        ? 'linear-gradient(135deg,#f59e0b,#d97706)'
+        : 'linear-gradient(135deg,#ef4444,#dc2626)';
+
+    const optsHtml = opts.map(o => {
+      const isRight = o === q.key;
+      const isUser  = o === userAnswer;
+      let style = 'padding:8px 12px; margin:4px 0; border-radius:8px; font-size:13px; font-weight:600;';
+      if(isRight)              style += 'background:rgba(255,255,255,0.3); border:2px solid #fff;';
+      else if(isUser && !isRight) style += 'background:rgba(0,0,0,0.2); border:2px dashed rgba(255,255,255,0.4); text-decoration:line-through;';
+      else                     style += 'background:rgba(255,255,255,0.1); opacity:0.6;';
+      return `<div style="${style}">${isRight?'✓ ':''}${o}${isUser&&!isRight?' ← Pilihan Anda':''}</div>`;
+    }).join('');
+
+    html += `
+      <div style="background:${bgColor}; padding:16px; border-radius:14px; color:white; margin-bottom:12px; position:relative;">
+        <span style="position:absolute; right:14px; top:14px; font-size:22px;">${icon}</span>
+        <div style="font-size:12px; font-weight:700; opacity:0.7; margin-bottom:6px;">SOAL ${i+1}/${currentQuiz.questions.length}</div>
+        <div style="font-size:15px; font-weight:700; margin-bottom:10px; padding-right:30px;">${q.q}</div>
+        ${optsHtml}
+      </div>`;
+  });
+
+  html += `</div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">
+      <button class="btn-main" onclick="startConfirm('${escQ(currentQuiz.activeMateri)}')" style="flex:1;">🔄 Coba Lagi</button>
+      <button style="background:linear-gradient(135deg,#6b7280,#4b5563);color:white;border:none;padding:14px 28px;border-radius:12px;font-weight:700;cursor:pointer;flex:1;font-family:'Miriam Libre',sans-serif;" onclick="goToAssessment()">🏠 Assessment</button>
+    </div>`;
+
+  document.getElementById("quizContainer").innerHTML = html;
+}
+
+function goToAssessment(){
+  document.getElementById("quizPage").style.display = "none";
+  showAssessmentPage();
+  userAnswers = [];
+  selectedNow = null;
+}
+
+/* ================= UTIL ================= */
+function shuffle(arr){ return arr.sort(() => Math.random() - 0.5); }
+function escQ(str){ return String(str||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"'); }
+
+window.logout = () => {
+  sessionStorage.removeItem("userData");
+  sessionStorage.removeItem("loginTime");
+  location.reload();
+};
+
+function goLandingPage(){
+  landingPage.style.display    = "flex";
+  materiPage.style.display     = "none";
+  assessmentPage.style.display = "none";
+  quizPage.style.display       = "none";
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ================= INIT ================= */
+window.onload = () => { loadUnitList(); };
+
+/* Swipe antar slide di viewer materi (nonaktif saat gambar sedang di-pinch-zoom) */
+let _tx = 0, _ty = 0;
+document.addEventListener('touchstart', e => {
+  if(e.touches.length === 1){ _tx = e.touches[0].clientX; _ty = e.touches[0].clientY; }
+}, { passive:true });
+document.addEventListener('touchend', e => {
+  if(!document.getElementById('mediaViewer') || viewerMediaList.length < 2) return;
+  if(window.visualViewport && window.visualViewport.scale > 1.05) return;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - _tx, dy = t.clientY - _ty;
+  if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) changeSlide(dx < 0 ? 1 : -1);
+}, { passive:true });
+</script>
+</body>
+</html>
