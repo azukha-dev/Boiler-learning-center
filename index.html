@@ -18,8 +18,6 @@
   <meta name="format-detection" content="telephone=no">
   
   <title>Boiler Inspection Learning Center</title>
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">  
   <link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
@@ -365,7 +363,7 @@ function setGlobalLoading(on){ document.getElementById('globalLoading').classLis
 function loadingHtml(text){ return `<div class="state-box"><div class="spinner"></div><div>${text}</div></div>`; }
 function showListError(box, err, retryFn){
   box.className = 'topic-grid';
-  box.innerHTML = `<div class="state-box">⚠️ Gagal memuat data.<small></small><button class="btn-main" type="button">🔄 Coba lagi</button></div>`;
+  box.innerHTML = `<div class="state-box">⚠️ Gagal loading data.<small></small><button class="btn-main" type="button">🔄 Coba lagi</button></div>`;
   box.querySelector('small').textContent = (err && err.message) ? err.message : '';
   box.querySelector('button').onclick = retryFn;
 }
@@ -624,7 +622,7 @@ function loadAssessmentList(){
   const user = getValidSession();
   const box  = document.getElementById("assessmentList");
   box.className = "topic-grid";
-  box.innerHTML = loadingHtml('Memuat daftar assessment…');
+  box.innerHTML = loadingHtml('Loading daftar assessment…');
 
   apiGet('getAssessmentList')
     .then(list => {
@@ -680,13 +678,20 @@ function renderAssessmentList(list, result){
             ? `<span class="chip ${pass ? 'ok' : 'bad'}">${pass ? '✅ Lulus' : '❌ Belum lulus'} · ${score}</span>`
             : '<span class="chip">Belum dikerjakan</span>'}
           ${rem > 0 ? `<span class="chip warn">🔁 Remedial ${rem}×</span>` : ''}
+          ${score >= 100 ? '<span class="chip ok">🏆 Nilai sempurna</span>' : ''}
         </div>
         ${has ? `<div class="topic-bar"><i style="width:${Math.min(score,100)}%"></i></div>` : ''}
       </div>
       <div class="topic-go">›</div>`;
     card.querySelector('.topic-title').textContent = m;
-    card.onclick   = () => startConfirm(m);
-    card.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); startConfirm(m); } };
+    if(score >= 100){
+      card.style.cursor = 'default';
+      card.removeAttribute('role');
+      card.tabIndex = -1;
+    } else {
+      card.onclick   = () => startConfirm(m);
+      card.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); startConfirm(m); } };
+    }
     box.appendChild(card);
   });
 }
@@ -888,7 +893,7 @@ function renderResultView(nilai, result){
       </p>
       ${remedialInfo}
       <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;">
-        <button class="btn-main" onclick="startConfirm('${escQ(currentQuiz.activeMateri)}')" style="flex:1;">🔄 Remedial</button>
+        ${nilai < 100 ? `<button class="btn-main" onclick="startConfirm('${escQ(currentQuiz.activeMateri)}')" style="flex:1;">🔄 Remedial</button>` : ''}
         <button class="btn-secondary" onclick="showReview()" style="flex:1;">📝 Review</button>
         <button style="background:linear-gradient(135deg,#6b7280,#4b5563);color:white;border:none;padding:14px 28px;border-radius:12px;font-weight:700;cursor:pointer;flex:1;font-family:'Miriam Libre',sans-serif;" onclick="goToAssessment()">🏠 Assessment</button>
       </div>
@@ -935,7 +940,7 @@ function showReview(){
 
   html += `</div>
     <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">
-      <button class="btn-main" onclick="startConfirm('${escQ(currentQuiz.activeMateri)}')" style="flex:1;">🔄 Coba Lagi</button>
+      ${currentQuiz.score < currentQuiz.questions.length ? `<button class="btn-main" onclick="startConfirm('${escQ(currentQuiz.activeMateri)}')" style="flex:1;">🔄 Coba Lagi</button>` : ''}
       <button style="background:linear-gradient(135deg,#6b7280,#4b5563);color:white;border:none;padding:14px 28px;border-radius:12px;font-weight:700;cursor:pointer;flex:1;font-family:'Miriam Libre',sans-serif;" onclick="goToAssessment()">🏠 Assessment</button>
     </div>`;
 
@@ -950,7 +955,13 @@ function goToAssessment(){
 }
 
 /* ================= UTIL ================= */
-function shuffle(arr){ return arr.sort(() => Math.random() - 0.5); }
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 function escQ(str){ return String(str||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"'); }
 
 window.logout = () => {
