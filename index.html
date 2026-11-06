@@ -218,6 +218,137 @@ h1{font-size:clamp(44px,6vw,78px);font-weight:700;line-height:1.1;margin-bottom:
   .main-btn{width:100%;padding:18px 25px;font-size:18px}
 }
 
+/* ═══════════ MODERN UI v2 ═══════════ */
+@keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 7px rgba(239,68,68,0)}}
+.topic-grid{gap:20px}
+.mat-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.as-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+
+/* ── Card materi ── */
+.mcard{position:relative;display:flex;flex-direction:column;border-radius:24px;overflow:hidden;cursor:pointer;outline:none;
+  color:var(--navy);background:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 10px 30px rgba(15,42,68,.16);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s;animation:rise .5s backwards;animation-delay:var(--d,0s);
+  -webkit-tap-highlight-color:transparent}
+.mcard:focus-visible{box-shadow:0 0 0 3px var(--teal)}
+.mcard:active{transform:scale(.97)}
+.mcard-cover{position:relative;aspect-ratio:16/10;overflow:hidden;background:linear-gradient(135deg,#0f2a44,#0d9488 70%,#14b8a6)}
+.mcard-cover::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(15,42,68,0) 45%,rgba(15,42,68,.6))}
+.mcard-ph{position:absolute;inset:0;display:grid;place-items:center;font-size:44px;opacity:.9}
+.mcard-cover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;object-position:top;display:block;
+  transition:transform .6s;pointer-events:none;-webkit-user-drag:none;user-select:none}
+.mcard-no{position:absolute;z-index:3;top:12px;left:12px;min-width:36px;height:30px;padding:0 10px;border-radius:99px;display:grid;place-items:center;
+  font-size:13px;font-weight:700;color:#fff;background:rgba(15,42,68,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3)}
+.mcard-chips{position:absolute;z-index:3;left:12px;bottom:10px;display:flex;gap:6px}
+.mcard-chip{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;color:#fff;background:rgba(255,255,255,.22);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.35)}
+.mcard-body{padding:16px 16px 14px;display:flex;flex-direction:column;gap:12px;flex:1}
+.mcard-title{font-size:16px;font-weight:700;line-height:1.35;color:#0b1f33;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+.mcard-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;font-size:13px;font-weight:700;color:var(--teal2)}
+.mcard-go{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:22px;line-height:1;
+  background:rgba(20,184,166,.15);color:var(--teal2);transition:all .25s}
+
+/* ── Card assessment ── */
+.acard{--c:#6366f1;--c2:#4f46e5;position:relative;display:flex;align-items:center;gap:16px;padding:18px;border-radius:24px;cursor:pointer;outline:none;
+  color:var(--navy);background:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 10px 30px rgba(15,42,68,.16);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s;animation:rise .5s backwards;animation-delay:var(--d,0s);
+  -webkit-tap-highlight-color:transparent}
+.acard.st-ok{--c:#10b981;--c2:#059669}
+.acard.st-bad{--c:#ef4444;--c2:#dc2626}
+.acard.st-new{--c:#94a3b8;--c2:#64748b}
+.acard:focus-visible{box-shadow:0 0 0 3px var(--c)}
+.acard:active{transform:scale(.98)}
+.acard.locked{cursor:default}
+.acard.locked:active{transform:none}
+.aring{--p:0;position:relative;flex:0 0 68px;height:68px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--c) calc(var(--p)*1%),rgba(15,42,68,.1) 0)}
+.aring::before{content:'';position:absolute;inset:7px;border-radius:50%;background:#fff}
+.aring span{position:relative;font-size:17px;font-weight:700;color:var(--c2)}
+.abody{flex:1;min-width:0}
+.atitle{font-size:15.5px;font-weight:700;line-height:1.35;color:#0b1f33;word-break:break-word}
+.ameta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.ago{flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:22px;line-height:1;
+  background:rgba(15,42,68,.07);color:#334155;transition:all .25s}
+@media (hover:hover){
+  .mcard:hover{transform:translateY(-6px);box-shadow:0 24px 48px rgba(15,42,68,.26)}
+  .mcard:hover .mcard-cover img{transform:scale(1.07)}
+  .mcard:hover .mcard-go{background:var(--teal2);color:#fff;transform:translateX(3px)}
+  .acard:not(.locked):hover{transform:translateY(-5px);box-shadow:0 20px 40px rgba(15,42,68,.24)}
+  .acard:not(.locked):hover .ago{background:var(--c);color:#fff;transform:translateX(3px)}
+}
+
+/* ── Layar soal ── */
+.quiz-page{background:radial-gradient(circle at 15% 0%,#3730a3 0%,#0f172a 60%)}
+.quiz-container{max-width:760px;border-radius:30px;padding:28px 30px 32px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.qz-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.qz-count{font-size:14px;font-weight:700;color:#64748b}
+.qz-count b{font-size:20px;color:#4f46e5}
+.qz-timer{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:99px;background:#eef2ff;color:#4338ca;
+  font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;transition:background .3s,color .3s}
+.qz-timer.urgent{background:#fee2e2;color:#dc2626;animation:pulseRed 1s infinite}
+.qz-bar{height:8px;border-radius:99px;background:#e2e8f0;overflow:hidden}
+.qz-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .5s}
+.qz-tbar{height:4px;border-radius:99px;background:#f1f5f9;overflow:hidden;margin:6px 0 24px}
+.qz-tbar i{display:block;height:100%;width:100%;border-radius:inherit;background:linear-gradient(90deg,#f59e0b,#ef4444);transition:width 1s linear}
+.question-text{font-size:21px;line-height:1.5;color:#0f172a;margin-bottom:24px}
+.question-image{border-radius:18px;border:1px solid #e2e8f0;background:#f8fafc}
+.options-grid{gap:12px}
+.option-btn{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;border:2px solid #e2e8f0;background:#fff;
+  color:#1e293b;box-shadow:0 2px 6px rgba(15,23,42,.04);transition:transform .15s,border-color .2s,background .2s,box-shadow .2s}
+.option-btn .opt-l{flex:0 0 38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:14px;font-weight:700;
+  background:#eef2ff;color:#4f46e5;transition:all .2s}
+.option-btn .opt-t{flex:1;line-height:1.45}
+@media (hover:hover){.option-btn:not(:disabled):hover{border-color:#818cf8;background:#f5f7ff;transform:translateX(3px)}}
+.option-btn.selected{background:linear-gradient(135deg,#6366f1,#4f46e5);border-color:transparent;color:#fff;box-shadow:0 10px 24px rgba(79,70,229,.35)}
+.option-btn.selected .opt-l{background:rgba(255,255,255,.22);color:#fff}
+.option-btn:disabled{cursor:default}
+.qz-next{width:100%;margin-top:22px;padding:16px;border:none;border-radius:16px;cursor:pointer;font-family:inherit;font-size:16px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 12px 28px rgba(16,185,129,.35);transition:transform .2s}
+.qz-next:active{transform:scale(.97)}
+.score-circle{width:170px;height:170px;font-size:50px}
+
+@media (max-width:768px){
+  .mat-grid,.as-grid{grid-template-columns:1fr}
+  .mcard-cover{aspect-ratio:16/9}
+  .quiz-container{padding:20px 18px 24px;border-radius:24px}
+  .question-text{font-size:18px}
+}
+
+/* ═══════════ HEADER HALAMAN v3 ═══════════ */
+.ph-hero{--ac:#5eead4;--g1:#14b8a6;--g2:#0d9488;position:relative;display:flex;align-items:center;gap:20px;
+  padding:24px 28px;margin:0 4px 28px;border-radius:30px;overflow:hidden;color:#fff;
+  background:linear-gradient(135deg,rgba(15,42,68,.82),rgba(13,148,136,.7));
+  border:1px solid rgba(255,255,255,.35);box-shadow:0 18px 44px rgba(15,42,68,.28);
+  backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);animation:rise .5s backwards}
+.ph-hero.as{--ac:#a5b4fc;--g1:#818cf8;--g2:#4f46e5;background:linear-gradient(135deg,rgba(15,23,42,.84),rgba(79,70,229,.7))}
+.ph-hero::before{content:'';position:absolute;right:-50px;top:-60px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.22),transparent 70%);pointer-events:none}
+.ph-hero::after{content:'';position:absolute;right:70px;bottom:-70px;width:150px;height:150px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.18);pointer-events:none}
+.ph-ico{position:relative;z-index:1;flex:0 0 68px;height:68px;border-radius:22px;display:grid;place-items:center;font-size:32px;
+  background:linear-gradient(135deg,var(--g1),var(--g2));border:1px solid rgba(255,255,255,.4);
+  box-shadow:0 10px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.35)}
+.ph-txt{position:relative;z-index:1;min-width:0}
+.ph-eyebrow{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.ph-eyebrow::before{content:'';width:22px;height:3px;border-radius:99px;background:var(--ac)}
+.ph-title{margin:6px 0 0;font-size:clamp(28px,4.4vw,46px);font-weight:700;line-height:1.08;letter-spacing:-.01em;text-shadow:0 4px 18px rgba(0,0,0,.25)}
+.ph-title span{color:var(--ac)}
+.ph-sub{margin-top:8px;font-size:14px;line-height:1.5;color:rgba(255,255,255,.8);max-width:520px}
+
+@media (max-width:768px){
+  .ph-hero{padding:18px 18px;gap:14px;border-radius:24px;margin:0 0 20px}
+  .ph-ico{flex-basis:54px;height:54px;border-radius:18px;font-size:26px}
+  .ph-eyebrow{font-size:10.5px;letter-spacing:.2em}
+  .ph-sub{font-size:13px}
+}
+@media (max-height:500px) and (orientation:landscape){
+  .ph-hero{padding:10px 16px;margin-bottom:10px;border-radius:18px;gap:12px}
+  .ph-ico{flex-basis:40px;height:40px;border-radius:13px;font-size:20px}
+  .ph-sub,.ph-eyebrow{display:none}
+  .ph-title{font-size:20px;margin:0}
+}
+
 /* ── HP landscape (taruh PALING AKHIR) ── */
 @media (max-height:500px) and (orientation:landscape){
   .container{padding:64px 24px 14px;max-width:100%}
@@ -271,8 +402,13 @@ h1{font-size:clamp(44px,6vw,78px);font-weight:700;line-height:1.1;margin-bottom:
       <button class="nav-btn" onclick="showAssessmentPage()">Ke Assessment</button>
       <button class="nav-btn logout" onclick="logout()">Logout</button>
     </div>
-    <div class="page-header">
-      <h2>Materi Pelatihan</h2>
+    <div class="ph-hero">
+      <div class="ph-ico">📘</div>
+      <div class="ph-txt">
+        <div class="ph-eyebrow">Learning Center</div>
+        <h2 class="ph-title">Materi <span>Pelatihan</span></h2>
+        <p class="ph-sub">Pelajari SOP dan instruksi kerja boiler lewat slide dan video, kapan saja.</p>
+      </div>
     </div>
     <div id="materialList" class="content-grid"></div>
   </div>
@@ -282,8 +418,13 @@ h1{font-size:clamp(44px,6vw,78px);font-weight:700;line-height:1.1;margin-bottom:
       <button class="nav-btn" onclick="showMateriPage()">Ke Materi</button>
       <button class="nav-btn logout" onclick="logout()">Logout</button>
     </div>
-    <div class="page-header">
-      <h2>Ujian Assessment</h2>
+    <div class="ph-hero as">
+      <div class="ph-ico">🎯</div>
+      <div class="ph-txt">
+        <div class="ph-eyebrow">Assessment Center</div>
+        <h2 class="ph-title">Ujian <span>Assessment</span></h2>
+        <p class="ph-sub">Uji pemahamanmu. Nilai minimal lulus 90, remedial boleh diulang.</p>
+      </div>
     </div>
     <div id="assessmentList" class="content-grid"></div>
   </div>
@@ -1078,6 +1219,170 @@ document.addEventListener('touchend', e => {
   const dx = t.clientX - _tx, dy = t.clientY - _ty;
   if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) changeSlide(dx < 0 ? 1 : -1);
 }, { passive:true });
+/* ═══════════ MODERN UI v2 — override fungsi tampilan ═══════════ */
+
+function matThumb(url){
+  if(Array.isArray(url)) url = url[0];
+  const u = normalizeImage(url || '');
+  return u.includes('googleusercontent.com/d/') ? u + '=w600' : u;
+}
+
+/* ── Card materi ── */
+function renderMateri(data){
+  const box = document.getElementById("materialList");
+  box.className = "topic-grid mat-grid";
+  box.innerHTML = "";
+
+  if(data.length === 0){
+    box.innerHTML = '<div class="state-box">Belum ada materi tersedia.</div>';
+    return;
+  }
+
+  data.forEach((m, i) => {
+    const thumb = m.gambar ? matThumb(m.gambar) : '';
+    const card = document.createElement('div');
+    card.className = 'mcard';
+    card.style.setProperty('--d', (i * 0.05) + 's');
+    card.setAttribute('role', 'button');
+    card.tabIndex = 0;
+    card.innerHTML = `
+      <div class="mcard-cover">
+        <div class="mcard-ph">${m.video && !m.gambar ? '🎬' : '📘'}</div>
+        ${thumb ? '<img alt="" loading="lazy" draggable="false">' : ''}
+        <span class="mcard-no">${String(i + 1).padStart(2, '0')}</span>
+        <div class="mcard-chips">
+          ${m.gambar ? '<span class="mcard-chip">🖼️ Slide</span>' : ''}
+          ${m.video  ? '<span class="mcard-chip">🎬 Video</span>' : ''}
+        </div>
+      </div>
+      <div class="mcard-body">
+        <h3 class="mcard-title"></h3>
+        <div class="mcard-foot"><span>Buka materi</span><span class="mcard-go">›</span></div>
+      </div>`;
+    const img = card.querySelector('img');
+    if(img){ img.onerror = () => img.remove(); img.src = thumb; }
+    card.querySelector('.mcard-title').textContent = m.judul;
+    card.onclick   = () => showMateriViewer(m);
+    card.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); showMateriViewer(m); } };
+    box.appendChild(card);
+  });
+}
+
+/* ── Card assessment (ring progres) ── */
+function renderAssessmentList(list, result){
+  result = result || {};
+  const scores   = result.scores || {};
+  const remPer   = result.remedialPerModul || {};
+  const totalRem = result.remedialCount || 0;
+
+  const box = document.getElementById("assessmentList");
+  box.className = "topic-grid as-grid";
+  box.innerHTML = "";
+
+  if(list.length === 0){
+    box.innerHTML = '<div class="state-box">Belum ada assessment tersedia.</div>';
+    return;
+  }
+
+  const lulus = list.filter(m => (scores[m] || 0) >= PASS_SCORE).length;
+  const summary = document.createElement('div');
+  summary.className = 'summary-pill';
+  summary.innerHTML = `
+    <span>✅ ${lulus} dari ${list.length} modul lulus</span>
+    ${totalRem > 0 ? `<span style="color:#fcd34d;">🔁 Total remedial: ${totalRem}×</span>` : ''}`;
+  box.appendChild(summary);
+
+  list.forEach((m, i) => {
+    const score = scores[m] || 0;
+    const has   = score > 0;
+    const pass  = score >= PASS_SCORE;
+    const rem   = remPer[m] || 0;
+    const done  = score >= 100;
+
+    const card = document.createElement('div');
+    card.className = 'acard ' + (!has ? 'st-new' : pass ? 'st-ok' : 'st-bad') + (done ? ' locked' : '');
+    card.style.setProperty('--d', (i * 0.05) + 's');
+    card.setAttribute('role', 'button');
+    card.tabIndex = 0;
+    card.innerHTML = `
+      <div class="aring" style="--p:${Math.min(score, 100)}"><span>${has ? score : '–'}</span></div>
+      <div class="abody">
+        <div class="atitle"></div>
+        <div class="ameta">
+          ${has
+            ? `<span class="chip ${pass ? 'ok' : 'bad'}">${pass ? '✅ Lulus' : '❌ Belum lulus'}</span>`
+            : '<span class="chip">Belum dikerjakan</span>'}
+          ${rem > 0 ? `<span class="chip warn">🔁 Remedial ${rem}×</span>` : ''}
+          ${done ? '<span class="chip ok">🏆 Sempurna</span>' : ''}
+        </div>
+      </div>
+      ${done ? '' : '<div class="ago">›</div>'}`;
+    card.querySelector('.atitle').textContent = m;
+    if(done){
+      card.removeAttribute('role');
+      card.tabIndex = -1;
+    } else {
+      card.onclick   = () => startConfirm(m);
+      card.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); startConfirm(m); } };
+    }
+    box.appendChild(card);
+  });
+}
+
+/* ── Layar soal ── */
+function renderQuestion(){
+  if(currentQuiz.index >= currentQuiz.questions.length) return finishQuiz();
+
+  const q     = currentQuiz.questions[currentQuiz.index];
+  const total = q.timer || 20;
+  let   time  = total;
+  const n     = currentQuiz.index + 1;
+  const len   = currentQuiz.questions.length;
+  selectedNow = null;
+
+  const box = document.getElementById("quizContainer");
+
+  if(!currentQuiz._shuffledOpts[currentQuiz.index]){
+    currentQuiz._shuffledOpts[currentQuiz.index] = shuffle([...q.options]);
+  }
+  const opts = currentQuiz._shuffledOpts[currentQuiz.index];
+
+  const letters = ['A','B','C','D','E'];
+  const optsHtml = opts.map((o, i) =>
+    `<button class="option-btn" id="opt-${i}" onclick="pickOption(${i})">
+       <span class="opt-l">${letters[i]}</span><span class="opt-t">${o}</span>
+     </button>`
+  ).join("");
+
+  box.innerHTML = `
+    <div class="qz-top">
+      <div class="qz-count">Soal <b>${n}</b> / ${len}</div>
+      <div class="qz-timer" id="timerWrap"><span>⏱</span><span id="timer">${time}s</span></div>
+    </div>
+    <div class="qz-bar"><i style="width:${(n / len) * 100}%"></i></div>
+    <div class="qz-tbar"><i id="timerBar"></i></div>
+    ${q.gambar ? `<img src="${normalizeImage(q.gambar)}" class="question-image">` : ''}
+    <div class="question-text">${q.q}</div>
+    <div class="options-grid">${optsHtml}</div>
+    <button class="qz-next" id="nextBtn" onclick="commitAndNext()" style="display:none;">
+      Lanjut ke Soal Berikutnya →
+    </button>`;
+
+  clearInterval(currentQuiz.timer);
+  currentQuiz.timer = setInterval(() => {
+    time--;
+    const timerEl = document.getElementById("timer");
+    const wrapEl  = document.getElementById("timerWrap");
+    const barEl   = document.getElementById("timerBar");
+    if(timerEl) timerEl.innerText = Math.max(time, 0) + "s";
+    if(barEl)   barEl.style.width = Math.max(time / total * 100, 0) + "%";
+    if(wrapEl && time <= 5) wrapEl.classList.add('urgent');
+    if(time <= 0){
+      clearInterval(currentQuiz.timer);
+      timeoutQuestion();
+    }
+  }, 1000);
+}
 </script>
 </body>
 </html>
