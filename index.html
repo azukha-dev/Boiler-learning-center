@@ -180,6 +180,12 @@ h1{font-size:clamp(44px,6vw,78px);font-weight:700;line-height:1.1;margin-bottom:
 .slide-prev{left:15px}.slide-next{right:15px}
 .slide-nav:hover{background:rgba(255,255,255,.3)}
 
+/* ── Watermark-on-save ── */
+.wm-wrap{position:relative;width:100%;flex:0 0 100%;height:calc(100vh - 70px);height:calc(100dvh - 70px)}
+.wm-wrap img{position:absolute;left:0;top:0}
+.wm-wrap img.wm-clean{pointer-events:none;-webkit-user-drag:none;user-select:none;z-index:1}
+.wm-wrap img.wm-top{opacity:.01;z-index:2;-webkit-touch-callout:default}
+
 /* ── Safe area ── */
 @supports (padding:max(0px)){
   body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
@@ -534,7 +540,10 @@ window.showMateriViewer = function(m){
       </div>`;
     } else {
       return `<div class="media-slide ${i===0?'active':''}">
-        <img src="${normalizeImage(url)}" class="zoomable" alt="Slide ${i+1}">
+        <div class="wm-wrap">
+          <img src="${normalizeImage(url)}" class="zoomable wm-clean" alt="Slide ${i+1}" draggable="false">
+          <img src="${normalizeImage(url)}" class="zoomable wm-top" data-src="${normalizeImage(url)}" alt="Slide ${i+1}">
+        </div>
       </div>`;
     }
   }).join("");
@@ -567,7 +576,84 @@ window.showMateriViewer = function(m){
 
   currentSlideIndex = 0;
   setTimeout(setupSliderZoom, 100);
+  applyWatermarks();
 };
+
+/* ================= WATERMARK SAAT DISIMPAN ================= */
+const WM_LOGO_URL = 'https://lh3.googleusercontent.com/d/1RpuNBKjnn9HXExJFvs3W_IM06xnvKBWY';
+let _wmLogoPromise = null;
+
+function _loadImgCors(src){
+  return new Promise((resolve, reject) => {
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload  = () => resolve(im);
+    im.onerror = () => reject(new Error('load gagal'));
+    im.src = src;
+  });
+}
+
+function _getWmLogo(){
+  if(!_wmLogoPromise) _wmLogoPromise = _loadImgCors(WM_LOGO_URL);
+  return _wmLogoPromise;
+}
+
+async function _buildWatermarked(src){
+  const [img, logo] = await Promise.all([_loadImgCors(src), _getWmLogo()]);
+
+  // batasi ukuran supaya tidak berat
+  const MAXW  = 2000;
+  const scale = Math.min(1, MAXW / img.naturalWidth);
+  const W = Math.round(img.naturalWidth  * scale);
+  const H = Math.round(img.naturalHeight * scale);
+
+  const c   = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(img, 0, 0, W, H);
+
+  // ukuran logo ± 22% lebar gambar
+  const lw = Math.max(120, W * 0.22);
+  const lh = lw * (logo.naturalHeight / logo.naturalWidth);
+
+  // watermark berulang diagonal di seluruh gambar
+  ctx.save();
+  ctx.globalAlpha = 0.28;
+  ctx.translate(W / 2, H / 2);
+  ctx.rotate(-Math.PI / 6);
+  const stepX = lw * 1.9, stepY = lh * 3.2;
+  const span  = Math.hypot(W, H);
+  for(let y = -span; y < span; y += stepY){
+    for(let x = -span; x < span; x += stepX){
+      ctx.drawImage(logo, x, y, lw, lh);
+    }
+  }
+  ctx.restore();
+
+  // satu logo besar di tengah
+  ctx.save();
+  ctx.globalAlpha = 0.35;
+  const bw = W * 0.45, bh = bw * (logo.naturalHeight / logo.naturalWidth);
+  ctx.drawImage(logo, (W - bw) / 2, (H - bh) / 2, bw, bh);
+  ctx.restore();
+
+  return new Promise((resolve, reject) => {
+    c.toBlob(b => b ? resolve(URL.createObjectURL(b)) : reject(new Error('toBlob gagal')),
+             'image/jpeg', 0.92);
+  });
+}
+
+function applyWatermarks(){
+  document.querySelectorAll('#mediaViewer img.wm-top').forEach(async top => {
+    try{
+      const url = await _buildWatermarked(top.dataset.src);
+      top.src = url;   // yang tersimpan saat "Save image as" = versi ber-watermark
+    }catch(e){
+      // jika gagal (mis. CORS), biarkan gambar asli supaya viewer tetap jalan
+      console.warn('Watermark gagal:', e.message);
+    }
+  });
+}
 
 function closeMediaViewer(){
   const viewer = document.getElementById("mediaViewer");
@@ -591,17 +677,16 @@ function setupSliderZoom(){
 
 function scrollZoomHandler(e){
   e.preventDefault(); e.stopPropagation();
-  const img = e.currentTarget;
-  img.classList.remove('zoom2x','zoom3x','zoomed');
+  const wrap = e.currentTarget.closest('.wm-wrap') || e.currentTarget.parentNode;
+  const imgs = wrap.querySelectorAll('.zoomable');
+  imgs.forEach(im => im.classList.remove('zoom2x','zoom3x','zoomed'));
   if(e.deltaY < 0){
     if(viewerZoomLevel < 3) viewerZoomLevel++;
-    if(viewerZoomLevel === 2) img.classList.add('zoom2x','zoomed');
-    if(viewerZoomLevel === 3) img.classList.add('zoom3x','zoomed');
   } else {
     if(viewerZoomLevel > 1) viewerZoomLevel--;
-    if(viewerZoomLevel === 1) img.classList.remove('zoom2x','zoom3x','zoomed');
-    else img.classList.add('zoom2x','zoomed');
   }
+  if(viewerZoomLevel === 2) imgs.forEach(im => im.classList.add('zoom2x','zoomed'));
+  if(viewerZoomLevel === 3) imgs.forEach(im => im.classList.add('zoom3x','zoomed'));
 }
 
 window.changeSlide = function(direction){
